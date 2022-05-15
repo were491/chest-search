@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "chestsearch",
+  "version": "${version}",
+
+  "name": "Chest Search",
+  "description": "Search box for chests. If someone did this already then I am going to be so angry.",
+  "authors": [
+    "were491 (rha1117)"
+  ],
+  "contact": {
+    "homepage": "https://github.com/were491",
+    "sources": "https://github.com/were491/chest-search"
+  },
+
+  "license": "MIT",
+  "icon": "assets/chestsearch/icon.png",
+
+  "environment": "*",
+  "mixins": [
+    "chestsearch.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "minecraft": "~1.18.2",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
