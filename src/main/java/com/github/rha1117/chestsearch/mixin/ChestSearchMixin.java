@@ -27,6 +27,7 @@ public abstract class ChestSearchMixin extends Screen {
 
     private final int SEARCH_BOX_WIDTH = 80; // Config option soon?
     private boolean isChestScreen;
+    private boolean isEmptyString;
     private static TextFieldWidget itemSearchBox;
     private ButtonWidget resetButton;
 
@@ -41,6 +42,8 @@ public abstract class ChestSearchMixin extends Screen {
         itemSearchBox = new TextFieldWidget(MinecraftClient.getInstance().textRenderer,
                 4, this.height - 22, SEARCH_BOX_WIDTH, 16, itemSearchBox, new LiteralText("Type to search..."));
         this.addSelectableChild(itemSearchBox);
+        itemSearchBox.setChangedListener(str -> isEmptyString = str.trim().equals(""));
+        isEmptyString = itemSearchBox.getText().trim().equals("");
 
         resetButton = new ButtonWidget(SEARCH_BOX_WIDTH + 8, this.height - 24, 36, 20,
                 new LiteralText("Reset"), button -> itemSearchBox.setText(""));
@@ -53,7 +56,7 @@ public abstract class ChestSearchMixin extends Screen {
         itemSearchBox.tick();
     }
 
-    @Inject(at = @At("INVOKE"), method = "keyPressed(III)Z", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "keyPressed(III)Z", cancellable = true)
     private void checkKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             info.setReturnValue(true);
@@ -65,8 +68,7 @@ public abstract class ChestSearchMixin extends Screen {
 
     @Inject(at = @At("TAIL"), method = "drawSlot(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/screen/slot/Slot;)V")
     private void renderMatchingResults(MatrixStack matrices, Slot slot, CallbackInfo info) {
-        if (!isChestScreen) return;
-        if (itemSearchBox.getText().trim().equals("")) return;
+        if (!isChestScreen || isEmptyString) return;
 
         // TODO: use namespaces
         int color;
@@ -78,6 +80,7 @@ public abstract class ChestSearchMixin extends Screen {
             color = -2147483648;
         }
 
+        // TODO make code go zoom
         // copied from HandledScreen.class -> drawSlotHighlight
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
@@ -98,9 +101,10 @@ public abstract class ChestSearchMixin extends Screen {
         RenderSystem.enableDepthTest();
     }
 
-    @Inject(at = @At("INVOKE"), method = "render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V")
+    @Inject(at = @At("RETURN"), method = "render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V")
     private void renderSearchBox(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo info) {
         if (!isChestScreen) return;
+        // TODO WHY DOES THIS STUPID THING CAUSE SO MUCH LAG
         itemSearchBox.render(matrices, mouseX, mouseY, delta);
         resetButton.render(matrices, mouseX, mouseY, delta);
 
