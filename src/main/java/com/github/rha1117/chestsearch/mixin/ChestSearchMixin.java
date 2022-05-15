@@ -104,7 +104,6 @@ public abstract class ChestSearchMixin extends Screen {
     @Inject(at = @At("RETURN"), method = "render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V")
     private void renderSearchBox(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo info) {
         if (!isChestScreen) return;
-        // TODO WHY DOES THIS STUPID THING CAUSE SO MUCH LAG
         itemSearchBox.render(matrices, mouseX, mouseY, delta);
         resetButton.render(matrices, mouseX, mouseY, delta);
 
